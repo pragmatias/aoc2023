@@ -20,10 +20,10 @@ class DayXX() :
   val day = DayXX()
   // println("Step1 : Sample")
   // println(day.runStep1(Utils.dataSamplePath,day.dataFileS1,true))
+  // println("Step1 : Full")
+  // println(day.runStep1(Utils.dataFullPath,day.dataFileFull,false))
   // println("Step2 : Sample")
   // println(day.runStep2(Utils.dataSamplePath,day.dataFileS1,true))
-  // println("Step1 : Full")
-  // println(day.runStep1(Utils.dataFullPath,day.dataFileFull,true))
   // println("Step2 : Full")
-  // println(day.runStep2(Utils.dataFullPath,day.dataFileFull,true))
+  // println(day.runStep2(Utils.dataFullPath,day.dataFileFull,false))
   
