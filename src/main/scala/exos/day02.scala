@@ -7,6 +7,7 @@ import fr.pragmatias.tools.Utils
 class Day02() :
 
   val dataFileS1 = "day02_step1.txt"
+  val dataFileFull = "day02.txt"
   val regexGame = """^[^\d]*(\d+)[^\d]*$""".r
   val regexJet = """^\s*(\d+)\s+(\w+)\s*$""".r
 
@@ -76,6 +77,6 @@ class Day02() :
 @main def runDay02() =
     val day = Day02()
     // println(day.runStep1(Utils.dataSamplePath,day.dataFileS1,true))
-    // println(day.runStep1(Utils.dataFullPath,day.dataFileS1,false))
+    // println(day.runStep1(Utils.dataFullPath,day.dataFileFull,false))
     // println(day.runStep2(Utils.dataSamplePath,day.dataFileS1,true))
-    println(day.runStep2(Utils.dataFullPath,day.dataFileS1,false))
+    println(day.runStep2(Utils.dataFullPath,day.dataFileFull,false))

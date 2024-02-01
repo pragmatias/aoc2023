@@ -7,6 +7,7 @@ import scala.util.matching.Regex
 class Day01() : 
   val dataFileS1 = "day01_step1.txt"
   val dataFileS2 = "day01_step2.txt"
+  val dataFileFull = "day01.txt"
 
   val twoDigitRex = raw"^[^\d]*(\d).*(\d)[^\d]*".r
   val oneDigitRex = raw"^[^\d]*(\d)[^\d]*".r
@@ -97,8 +98,8 @@ class Day01() :
   // println("Debug (Find Data File)")
   println("listing files : {%s}".format(os.list(Utils.dataSamplePath)))
   // println("Exercise with Sample data :")
-  // println(day.runStep1(Utils.dataSamplePath,day.dataFile,true))
+  // println(day.runStep1(Utils.dataSamplePath,day.dataFileS1,true))
   // println(day.runStep2(Utils.dataSamplePath,day.dataFileS2,true))
   println("Exercise with Full data :")
-  // println(day.runStep1(Utils.dataFullPath,day.dataFileS1,false)) 
-  println(day.runStep2(Utils.dataFullPath,day.dataFileS1,false))
+  // println(day.runStep1(Utils.dataFullPath,day.dataFileFull,false)) 
+  println(day.runStep2(Utils.dataFullPath,day.dataFileFull,false))
