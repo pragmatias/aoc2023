@@ -1,8 +1,6 @@
 package fr.pragmatias.exos
 
 import fr.pragmatias.tools.Utils
-// import _root_.tools.{dataFullPath,dataSamplePath}
-
 
 class Day02() :
 
