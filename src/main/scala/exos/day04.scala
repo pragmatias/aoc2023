@@ -7,7 +7,6 @@ import scala.collection.immutable.HashMap
 class Day04() :
 
   val dataFileS1 = "day04_step1.txt"
-  val dataFileS2 = "day04_step2.txt"
   val dataFileFull = "day04.txt"
 
   val regexDecim = """(\d+)""".r

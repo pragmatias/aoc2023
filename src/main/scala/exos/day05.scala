@@ -7,7 +7,6 @@ import os.isDir
 class Day05() :
 
   val dataFileS1 = "day05_step1.txt"
-  val dataFileS2 = "day05_step2.txt"
   val dataFileFull = "day05.txt"
 
   val rexDecim = """(\d+)""".r

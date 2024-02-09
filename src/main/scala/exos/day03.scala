@@ -6,7 +6,6 @@ import scala.runtime.stdLibPatches.language.`3.1`
 class Day03() :
 
   val dataFileS1 = "day03_step1.txt"
-  val dataFileS2 = "day03_step2.txt"
   val dataFileFull = "day03.txt"
 
   val regexDecim = """(\d+)""".r
