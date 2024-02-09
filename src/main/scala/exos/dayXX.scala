@@ -17,7 +17,7 @@ class DayXX() :
 
 
 @main def runDayXX() = 
-  val day = Day06()
+  val day = DayXX()
   // println("Step1 : Sample")
   // println(day.runStep1(Utils.dataSamplePath,day.dataFileS1,true))
   // println("Step1 : Full")
