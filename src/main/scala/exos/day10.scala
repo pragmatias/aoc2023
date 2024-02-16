@@ -114,7 +114,7 @@ class Day10() :
       } else {
         val np = lnp.head 
         if (listAngle.contains(listChar(np.y)(np.x))) {
-          findAngle(np,nlbp,(step,np)::la,step+1)
+          findAngle(np,nlbp,la:::List((step,np)),step+1)
         } else {
           findAngle(np,nlbp,la,step)
         }
@@ -122,30 +122,29 @@ class Day10() :
 
     def startIsAngle(p:Pos) : Boolean = 
       val lnp : List[Pos] = possibleNextPos(listChar(p.y)(p.x),p).filter(checkPossiblePos(_,List()))
-      // val lnpc = lnp.map(x => listChar(x.y)(x.x))
       val p1 = lnp(0)
       val p2 = lnp(1)
       return !(((p1.y == p2.y) && (p1.x != p2.x)) || ((p1.y != p2.y) && (p1.x == p2.x)))
 
     def calculAreaFromAngle(la : List[(Int,Pos)]) : Int = 
       var lres : List[Pos] = List()
+      val laTmp = la.map(_._2)
+      val nl = laTmp.zip(laTmp.tail:::List(laTmp.head)) 
+      // println(nl)
       for (y <- List.range(0,limity))
         for (x <- List.range(0,limitx))
-          if ((la.filter(_._2 == Pos(x,y)).length == 0) /*&& (listChar(y)(x) == ".")*/ && pointIsInPath(Pos(x,y),la)) {
+          if ((laTmp.filter(_ == Pos(x,y)).length == 0) && pointIsInPath(Pos(x,y),nl)) {
             lres ::= Pos(x,y)
             // println("Char : %s ".format(listChar(y)(x)))
           }
       // println("list(%d) In : %s".format(lres.length,lres))
       return lres.length
 
-    def pointIsInPath(p:Pos,la:List[(Int,Pos)]) : Boolean = 
-      val las=la.sortBy(_._1)
-      val nl = las.zip(las.tail:::List(las.head))
+    def pointIsInPath(p:Pos,nl:List[(Pos,Pos)]) : Boolean = 
       var res = false
       Breaks.breakable { 
-        for( i <- List.range(0,las.length))
-          val p1 : Pos = nl(i)._1._2
-          val p2 : Pos = nl(i)._2._2
+        for( i <- List.range(0,nl.length))
+          val (p1,p2) : (Pos,Pos) = nl(i)
           if ((p.x == p1.x) && (p.y == p1.y)) {
             res = false
             Breaks.break
@@ -171,26 +170,19 @@ class Day10() :
       }
       return res
 
-
-
     def calculArea() : Int = 
       val start : Pos = searchStartPos()
       // check if start is an angle or not 
       val startAngle : List[(Int,Pos)] = if (startIsAngle(start)) then List((0,start)) else List()
       val res = calculAreaFromAngle(findAngle(start,List(),startAngle,1))
       // println("Angle : "+res.map((z,x) => (z,listChar(x.y)(x.x))))
-
-
       return res
 
 
   def runStep1(p: os.Path, f: String, debug:Boolean) : Int =
     val data : geny.Generator[String] = os.read.lines.stream(p / f)
     val charMap : List[List[String]] = data.fold[List[List[String]]](List())((c,e) => c:::List(e.toList.map(_+"")))
-    // println(charMap)
     val context = MapLoop(charMap)
-    // println(test)
-    // test.showMap()
     return context.browseAllPaths()
 
   def runStep2(p: os.Path, f: String, debug:Boolean) : Int = 
