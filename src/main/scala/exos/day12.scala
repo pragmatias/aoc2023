@@ -12,14 +12,6 @@ class Day12() :
 
   val cache = mutable.Map.empty[(List[Char],List[Int],Int),Long]
 
-  def getTime[T](s : List[Char],debug:Boolean, fun : => T) : T =  {
-    val b = System.nanoTime()
-    val result = fun
-    val a = System.nanoTime()
-    if debug then println("Elapsed Time : %s ms - String : %s - Result : %s".format((a-b)/1000000,s,result))
-    return result
-  }
-
   def unfoldAndReplaceSequence(s : String, c : List[Int]) : Long =
     val ns : List[Char] = (1 to 5).map(_ => s).mkString("?").toList
     val nc : List[Int] = (1 to 5).flatMap(_ => c).toList
@@ -67,7 +59,7 @@ class Day12() :
   def runStep1(p: os.Path, f: String, debug:Boolean) : Long =
     val data : geny.Generator[String] = os.read.lines.stream(p / f)
     val listSpring : List[(List[Char],List[Int])]= data.map(_.split(" ")).map(x => (x(0).toList,regexDecim.findAllIn(x(1)).map(_.toInt).toList)).toList
-    val res = listSpring.map((a,b) => getTime(a,debug,count(a,b,0)))
+    val res = listSpring.map((a,b) => Utils.getTime(a,debug,count(a,b,0)))
     if (debug) {
       println(listSpring)
       println(res)
@@ -77,7 +69,7 @@ class Day12() :
   def runStep2(p: os.Path, f: String, debug:Boolean) : Long = 
     val data : geny.Generator[String] = os.read.lines.stream(p / f)
     val listSpring : List[(String,List[Int])]= data.map(_.split(" ")).map(x => (x(0),regexDecim.findAllIn(x(1)).map(_.toInt).toList)).toList
-    val res = listSpring.map((a,b) => getTime(a.toList,debug,unfoldAndReplaceSequence(a,b)))
+    val res = listSpring.map((a,b) => Utils.getTime(a.toList,debug,unfoldAndReplaceSequence(a,b)))
     if (debug) {
       println(listSpring)
       println(res)
@@ -91,8 +83,8 @@ class Day12() :
   // println(day.runStep1(Utils.dataSamplePath,day.dataFileS1,true))
   // println("Step1 : Full")
   // println(day.runStep1(Utils.dataFullPath,day.dataFileFull,false))
-  // println("Step2 : Sample")
-  // println(day.runStep2(Utils.dataSamplePath,day.dataFileS1,false))
-  println("Step2 : Full")
-  println(day.runStep2(Utils.dataFullPath,day.dataFileFull,false))
+  println("Step2 : Sample")
+  println(day.runStep2(Utils.dataSamplePath,day.dataFileS1,true))
+  // println("Step2 : Full")
+  // println(day.runStep2(Utils.dataFullPath,day.dataFileFull,false))
   
