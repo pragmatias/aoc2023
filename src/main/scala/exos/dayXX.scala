@@ -8,11 +8,11 @@ class DayXX() :
   val dataFileFull = "dayXX.txt"
 
 
-  def runStep1(p: os.Path, f: String, debug:Boolean) : Int =
+  def runStep1(p: os.Path, f: String, debug:Boolean) : Long =
     val data : geny.Generator[String] = os.read.lines.stream(p / f)
     return 0
 
-  def runStep2(p: os.Path, f: String, debug:Boolean) : Int = 
+  def runStep2(p: os.Path, f: String, debug:Boolean) : Long = 
     val data : geny.Generator[String] = os.read.lines.stream(p / f)
     return 0
 
