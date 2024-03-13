@@ -13,13 +13,13 @@ class Day16() :
   enum Energy :
     case On, Off
   enum Dir :
-    case Up,Down,Left,Right
+    case U, D, L, R
     def opposed() : Dir = 
       return this match
-        case Dir.Up => Dir.Down
-        case Dir.Down => Dir.Up
-        case Dir.Left => Dir.Right
-        case Dir.Right => Dir.Left
+        case Dir.U => Dir.D
+        case Dir.D => Dir.U
+        case Dir.L => Dir.R
+        case Dir.R => Dir.L
       
   case class Tile(obs:Char,enr:Energy) :
     override def toString() : String = "[ %s ,%s]".format(obs,enr.toString().substring(0,2))
@@ -35,13 +35,14 @@ class Day16() :
     val limitY = plateau.length
     override def toString() : String = plateau.map(l => l.mkString("")).mkString("\n")
 
+    def isOnPlate(b:Beam):Boolean = (b.p.x >= 0 && b.p.x < limitX && b.p.y >= 0 && b.p.y < limitY)
 
     def getMove(d:Dir,p:Pos) : Pos =
       return d match 
-            case Dir.Up => Pos(p.x,p.y-1)
-            case Dir.Down => Pos(p.x,p.y+1)
-            case Dir.Left => Pos(p.x-1,p.y)
-            case Dir.Right => Pos(p.x+1,p.y)
+            case Dir.U => Pos(p.x,p.y-1)
+            case Dir.D => Pos(p.x,p.y+1)
+            case Dir.L => Pos(p.x-1,p.y)
+            case Dir.R => Pos(p.x+1,p.y)
 
     def moveBeam(b:Beam) : List[Beam] =
       val t = plateau(b.p.y)(b.p.x)
@@ -49,29 +50,29 @@ class Day16() :
         case '.' => return List(Beam(b.d,getMove(b.d,b.p)))
         case '-' => {
           b.d match
-            case Dir.Up | Dir.Down => return List(Beam(Dir.Left,getMove(Dir.Left,b.p)),Beam(Dir.Right,getMove(Dir.Right,b.p)))
-            case Dir.Left => return List(Beam(Dir.Left,getMove(Dir.Left,b.p)))
-            case Dir.Right => return List(Beam(Dir.Right,getMove(Dir.Right,b.p)))
+            case Dir.U | Dir.D => return List(Beam(Dir.L,getMove(Dir.L,b.p)),Beam(Dir.R,getMove(Dir.R,b.p)))
+            case Dir.L => return List(Beam(Dir.L,getMove(Dir.L,b.p)))
+            case Dir.R => return List(Beam(Dir.R,getMove(Dir.R,b.p)))
         } 
         case '|' => {
           b.d match
-            case Dir.Left | Dir.Right => return List(Beam(Dir.Up,getMove(Dir.Up,b.p)),Beam(Dir.Down,getMove(Dir.Down,b.p)))
-            case Dir.Up => return List(Beam(Dir.Up,getMove(Dir.Up,b.p)))
-            case Dir.Down => return List(Beam(Dir.Down,getMove(Dir.Down,b.p)))
+            case Dir.L | Dir.R => return List(Beam(Dir.U,getMove(Dir.U,b.p)),Beam(Dir.D,getMove(Dir.D,b.p)))
+            case Dir.U => return List(Beam(Dir.U,getMove(Dir.U,b.p)))
+            case Dir.D => return List(Beam(Dir.D,getMove(Dir.D,b.p)))
         }
         case '/' => {
           b.d match
-            case Dir.Left => return List(Beam(Dir.Down,getMove(Dir.Down,b.p)))
-            case Dir.Right => return List(Beam(Dir.Up,getMove(Dir.Up,b.p)))
-            case Dir.Up => return List(Beam(Dir.Right,getMove(Dir.Right,b.p)))
-            case Dir.Down => return List(Beam(Dir.Left,getMove(Dir.Left,b.p)))
+            case Dir.L => return List(Beam(Dir.D,getMove(Dir.D,b.p)))
+            case Dir.R => return List(Beam(Dir.U,getMove(Dir.U,b.p)))
+            case Dir.U => return List(Beam(Dir.R,getMove(Dir.R,b.p)))
+            case Dir.D => return List(Beam(Dir.L,getMove(Dir.L,b.p)))
         }
         case '\\' => {
           b.d match
-            case Dir.Left => return List(Beam(Dir.Up,getMove(Dir.Up,b.p)))
-            case Dir.Right => return List(Beam(Dir.Down,getMove(Dir.Down,b.p)))
-            case Dir.Down => return List(Beam(Dir.Right,getMove(Dir.Right,b.p)))
-            case Dir.Up => return List(Beam(Dir.Left,getMove(Dir.Left,b.p)))
+            case Dir.L => return List(Beam(Dir.U,getMove(Dir.U,b.p)))
+            case Dir.R => return List(Beam(Dir.D,getMove(Dir.D,b.p)))
+            case Dir.D => return List(Beam(Dir.R,getMove(Dir.R,b.p)))
+            case Dir.U => return List(Beam(Dir.L,getMove(Dir.L,b.p)))
         }
         case _ => return List()
 
@@ -81,7 +82,7 @@ class Day16() :
         return lres.distinct
       else 
         val nlres = (lres:::lb)
-        val nlb = lb.flatMap(b => moveBeam(b)).filter(b => b.p.x >= 0 && b.p.x < limitX && b.p.y >= 0 && b.p.y < limitY && lres.filter(x => b.isCompatible(x)).length == 0).distinct
+        val nlb = lb.flatMap(b => moveBeam(b)).filter(b => isOnPlate(b) && lres.filter(x => b.isCompatible(x)).length == 0).distinct
         return execEnergizing(nlb,nlres)
     
     def setEnergyOn(lp:List[Pos]) : Unit =
@@ -90,15 +91,15 @@ class Day16() :
 
 
     def getMaxEnergy() : Int = 
-      val lNorthSouth = (0 until limitX).foldLeft[List[Beam]](List())((c,e) => Beam(Dir.Down,Pos(e,0))::Beam(Dir.Up,Pos(e,limitY-1))::c)
-      val lWestEast = (0 until limitY).foldLeft[List[Beam]](List())((c,e) => Beam(Dir.Right,Pos(0,e))::Beam(Dir.Left,Pos(limitX-1,e))::c)
+      val lNorthSouth = (0 until limitX).foldLeft[List[Beam]](List())((c,e) => Beam(Dir.D,Pos(e,0))::Beam(Dir.U,Pos(e,limitY-1))::c)
+      val lWestEast = (0 until limitY).foldLeft[List[Beam]](List())((c,e) => Beam(Dir.R,Pos(0,e))::Beam(Dir.L,Pos(limitX-1,e))::c)
       val res = (lNorthSouth:::lWestEast).map(b => execEnergizing(List(b),List()).map(_.p).distinct.length)
       return res.max
 
   def runStep1(p: os.Path, f: String, debug:Boolean) : Long =
     val data : geny.Generator[String] = os.read.lines.stream(p / f)
     val pl = Plate(data.toList)
-    val res = Utils.getTime("",debug,pl.execEnergizing(List(Beam(Dir.Right,Pos(0,0))),List()).map(_.p).distinct)
+    val res = Utils.getTime("",debug,pl.execEnergizing(List(Beam(Dir.R,Pos(0,0))),List()).map(_.p).distinct)
     if (debug) then
       println(pl)
       println(res.mkString("\n"))

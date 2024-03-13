@@ -7,7 +7,6 @@ import org.scalatest.matchers.should.Matchers
 class Day25Test extends AnyFlatSpec with Matchers {
   
   val day = Day25()
-  
 
   // it should "Check Step n°1 with Sample Data" in {
   //   val res = day.runStep1(Utils.dataSamplePath,day.dataFileS1,false)
