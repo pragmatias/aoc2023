@@ -1,4 +1,4 @@
-package exos
+package fr.pragmatias.exos
 
 import fr.pragmatias.tools.Utils
 import scala.annotation.tailrec

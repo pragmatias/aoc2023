@@ -44,24 +44,18 @@ class Day01() :
       case _ => "0"
     })
     
-    if (debug) {
-      println("Debug (Step n°2)")
-      resultTmp.foreach(println(_))
-    }
-
     return resultTmp.foldLeft(0)((a,b) => a +  b.toInt)
 
 
 
   def runStep2(p : os.Path, f : String, debug : Boolean) : Int = 
     val data : geny.Generator[String] = os.read.lines.stream(p / f)
-    println(listNumber)
+    // println(listNumber)
     val resultTmp = data.map(x => getNumber(x,None,None)).map(x => translateNumber(x._1) + translateNumber(x._2))
     if (debug) {
       resultTmp.foreach(println(_))
     }
     return resultTmp.foldLeft(0)((a,b) => a +  b.toInt)
-    // return 0
 
   def getNumber(s : String, a : Option[String], b : Option[String]) : (String,String) = {
     if ( s.length >= 1 && (a.isEmpty || a.getOrElse("0") == "0")) {
@@ -95,8 +89,6 @@ class Day01() :
 
 @main def run() =
   val day = Day01()
-  // println("Debug (Find Data File)")
-  println("listing files : {%s}".format(os.list(Utils.dataSamplePath)))
   // println("Exercise with Sample data :")
   // println(day.runStep1(Utils.dataSamplePath,day.dataFileS1,true))
   // println(day.runStep2(Utils.dataSamplePath,day.dataFileS2,true))

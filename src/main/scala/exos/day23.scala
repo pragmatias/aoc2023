@@ -1,4 +1,4 @@
-package exos
+package fr.pragmatias.exos
 
 import fr.pragmatias.tools.Utils
 import scala.collection.immutable.HashMap
@@ -69,8 +69,8 @@ class Day23() :
 
       @tailrec
       def searchLongestPath(start:List[(Junction,Int)],lvisited : List[Junction]) : Int =
-        println("Appel search : ")
-        start.foreach(println)
+        // println("Appel search : ")
+        // start.foreach(println)
         if (start.isEmpty) then
           return hmRes(getEnd()) //get the end tile distance
         else 

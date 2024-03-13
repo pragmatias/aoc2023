@@ -1,4 +1,4 @@
-package exos
+package fr.pragmatias.exos
 
 import fr.pragmatias.tools.Utils
 import scala.runtime.stdLibPatches.language.`3.1`
@@ -52,7 +52,7 @@ class Day03() :
     }
 
     val resTmp = listDecim.filter(decimIsNearListSigne(_,listSigne))
-    println(resTmp)
+    // println(resTmp)
     return resTmp.foldLeft(0)((cuml,elt)=>cuml+elt.decim)
 
   def runStep2(p: os.Path, f: String, debug:Boolean) : Int = 
@@ -78,9 +78,8 @@ class Day03() :
     }
 
     val resTmp = listStar.map(x => (x,getListDecimNearSigne(x,listDecim))).filter(x => x._2.length>1)
-    println(resTmp)
+    // println(resTmp)
     return resTmp.foldLeft(0)((cuml,elt)=>cuml+elt._2.foldLeft(1)((c,e) => c*e.decim))
-    // return 0
 
 
 @main def runDay03() = 

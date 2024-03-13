@@ -1,4 +1,4 @@
-package exos
+package fr.pragmatias.exos
 
 import fr.pragmatias.tools.Utils
 import scala.annotation.tailrec
@@ -29,14 +29,14 @@ class Day09() :
   def runStep1(p: os.Path, f: String, debug:Boolean) : Long =
     val data : geny.Generator[String] = os.read.lines.stream(p / f)
     val lc : List[List[Long]] = data.map(_.split(" ").map(_.trim.toLong).toList).toList
-    println(lc)
+    // println(lc)
     val res = lc.map(findNextNumber(_)).foldLeft(0L)((c,e) => c+e)
     return res
 
   def runStep2(p: os.Path, f: String, debug:Boolean) : Long = 
     val data : geny.Generator[String] = os.read.lines.stream(p / f)
     val lc : List[List[Long]] = data.map(_.split(" ").map(_.trim.toLong).toList).toList
-    println(lc)
+    // println(lc)
     val res = lc.map(findFirstNumber(_)).foldLeft(0L)((c,e) => c+e)
     return res
 

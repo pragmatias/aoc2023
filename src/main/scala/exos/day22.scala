@@ -1,4 +1,4 @@
-package exos
+package fr.pragmatias.exos
 
 import fr.pragmatias.tools.Utils
 import scala.util.matching.Regex
@@ -96,7 +96,7 @@ class Day22() :
       val (listBricks,hmBricksUnder) = fallBricks()
       val lremoved = getBricksWhoCanBeRemoved(hmBricksUnder)
       val res = listBricks.map(b => getNumberOfBricksFall(b,lremoved,hmBricksUnder)).map(_._2)
-      println(res)
+      // println(res)
       return res.foldLeft(0)((c,e)=>c+e)
 
 

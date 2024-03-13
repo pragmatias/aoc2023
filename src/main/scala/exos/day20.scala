@@ -1,4 +1,4 @@
-package exos
+package fr.pragmatias.exos
 
 import fr.pragmatias.tools.Utils
 import scala.collection.mutable.HashMap
@@ -132,13 +132,11 @@ class Day20() :
     val flowButton = Flow("button",Pulse.Low,"broadcaster")
     // get dependance from rx 
     val rxDep = hmModule.filter(x => x._2.listConnection.contains("rx")).head
-    println(rxDep)
     val subDeps = hmModule.filter(x => x._2.listConnection.contains(rxDep._1)).map(_._1).toList
 
     def calculStep2(iter:Long,lsubDeps:List[String],lsubRes:List[(String,Long)]) : Long =
       if lsubDeps.length == lsubRes.length then 
         val res = lcm(lsubRes.map(_._2))//calcul
-        println(lsubRes)
         return res
       else 
         val (_,_,lf) = runWorkflow(List(flowButton),hmModule,List())
