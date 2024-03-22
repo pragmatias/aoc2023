@@ -107,14 +107,13 @@ class Day23() :
       val hmRes : scala.collection.mutable.HashMap[Pos,Int] = scala.collection.mutable.HashMap.empty 
 
       @tailrec
-      def searchLongestPath(start:List[(Junction,Int)],lvisited : List[Junction]) : Int =
+      def searchLongestPath(start:List[(Junction,Int)]) : Int =
         // println("Appel search : ")
         // start.foreach(println)
         if (start.isEmpty) then
           return hmRes(getEnd()) //get the end tile distance
         else 
           val lj = start.flatMap(x => hmJ.filterKeys(j => j.tStart.pos.pos == x._1.tEnd.pos.pos && j.tEnd.pos.pos != x._1.tStart.pos.pos)
-                                                           // && !lvisited.contains(j) && !lvisited.contains(Junction(j.tEnd,j.tStart)))
                                           .map(y => (y._1,y._2+x._2)))
           for i <- lj do 
             val tmp = hmRes.get(i._1.tEnd.pos.pos)
@@ -122,9 +121,9 @@ class Day23() :
               case Some(num) => if i._2 > num then hmRes(i._1.tEnd.pos.pos) = i._2
               case None => hmRes(i._1.tEnd.pos.pos) = i._2
              
-          return searchLongestPath(lj,start.map(_._1):::lvisited)
+          return searchLongestPath(lj)
         
-      return searchLongestPath(lStart,List())
+      return searchLongestPath(lStart)
         
 
 
@@ -132,16 +131,19 @@ class Day23() :
 
     def searchLongestPathP2() : Int = 
       val hmJ = searchAllJunction()
-      val allCrossWithIndex = (hmJ.map(_._1.tEnd).toList:::hmJ.map(_._1.tStart).toList).toList.distinct.sortBy(_.pos.pos.getDist(getStart())).zipWithIndex
-      val mapIndex : Map[Int,Tile] = allCrossWithIndex.foldLeft(Map.empty):
+      val allCrossWithIndex = (hmJ.map(_._1.tEnd.pos.pos).toList:::hmJ.map(_._1.tStart.pos.pos).toList).toList.distinct.sortBy(_.getDist(getStart())).zipWithIndex
+      
+      val mapIndex : Map[Int,Pos] = allCrossWithIndex.foldLeft(Map.empty):
         case (m,(e,i)) => Map((i->e))++m
-      val mapTile : Map[Tile,Int] = allCrossWithIndex.foldLeft(Map.empty):
+      
+      val mapTile : Map[Pos,Int] = allCrossWithIndex.foldLeft(Map.empty):
         case (m,(e,i)) => Map((e->i))++m
+      
       val nextCross : Map[Int,List[(Int,Int)]] = mapIndex.foldLeft(Map.empty):
-        case (m,(i,e)) => Map((i -> hmJ.filterKeys(j => j.tStart == e).map(x => (mapTile(x._1.tEnd),x._2)).toList))++m
+        case (m,(i,e)) => Map((i -> hmJ.filterKeys(j => j.tStart.pos.pos == e).map(x => (mapTile(x._1.tEnd.pos.pos),x._2)).toList))++m
 
         
-      val start = mapTile(getTile(PosWithDir(getStart(),Dir.S)))
+      val start = mapTile(getStart())
  
       def searchLongestPathP2(junc:Int,lvisited : BitSet,dist:Int) : Int =
         // println("who am i : %s - %s".format(junc,mapIndex(junc)))
@@ -199,10 +201,10 @@ class Day23() :
   val day = Day23()
   println("Step1 : Sample")
   println(day.runStep1(Utils.dataSamplePath,day.dataFileS1,true))
-  println("Step1 : Full")
-  println(day.runStep1(Utils.dataFullPath,day.dataFileFull,true))
+  // println("Step1 : Full")
+  // println(day.runStep1(Utils.dataFullPath,day.dataFileFull,true))
   println("Step2 : Sample")
   println(day.runStep2(Utils.dataSamplePath,day.dataFileS1,true))
   // println("Step2 : Full")
-  // println(day.runStep2(Utils.dataFullPath,day.dataFileFull,false))
+  // println(day.runStep2(Utils.dataFullPath,day.dataFileFull,true))
   

@@ -24,9 +24,9 @@ class Day23Test extends AnyFlatSpec with Matchers {
     res shouldEqual 154
   }
   
-  // it should "Check Step n°2 with Full Data" in {
-  //   val res = day.runStep2(Utils.dataFullPath,day.dataFileFull,false)
-  //   res shouldEqual 6542
-  // }
+  it should "Check Step n°2 with Full Data" in {
+    val res = day.runStep2(Utils.dataFullPath,day.dataFileFull,false)
+    res shouldEqual 6542
+  }
 
 }
