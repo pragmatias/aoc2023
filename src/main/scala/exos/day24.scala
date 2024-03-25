@@ -50,7 +50,7 @@ class Day24() :
       return Some(Hail2D(Pos(px,py),Vel(vx,vy)))
 
     def getMicroSeconds(p1:Pos) : Double = 
-      return if (v.x != 0) then (p1.y - p.y) / v.y else (p1.x - p.x) / v.x
+      return if (v.x == 0) then (p1.y - p.y) / v.y else (p1.x - p.x) / v.x
     def getCrossPos(newH : Hail2D) : Option[Pos] = 
       /* equation : 
           slope m = (vy/vx)
@@ -151,12 +151,12 @@ class Day24() :
 
 @main def runDay24() = 
   val day = Day24()
-  // println("Step1 : Sample")
-  // println(day.runStep1(Utils.dataSamplePath,day.dataFileS1,true,7,27))
-  // println("Step1 : Full")
-  // println(day.runStep1(Utils.dataFullPath,day.dataFileFull,false,200000000000000L,400000000000000L))
-  println("Step2 : Sample")
-  println(day.runStep2(Utils.dataSamplePath,day.dataFileS1,true))
+  println("Step1 : Sample")
+  println(Utils.getTime(true,day.runStep1(Utils.dataSamplePath,day.dataFileS1,true,7,27)))
+  println("Step1 : Full")
+  println(Utils.getTime(true,day.runStep1(Utils.dataFullPath,day.dataFileFull,false,200000000000000L,400000000000000L)))
+  // println("Step2 : Sample")
+  // println(day.runStep2(Utils.dataSamplePath,day.dataFileS1,true))
   // println("Step2 : Full")
   // println(day.runStep2(Utils.dataFullPath,day.dataFileFull,false))
   
