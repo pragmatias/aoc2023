@@ -21,34 +21,6 @@ class Day24() :
     def getHailXY() : Hail2D = Hail2D(Pos(px,py),Vel(vx,vy))
     def getHailXZ() : Hail2D = Hail2D(Pos(px,pz),Vel(vx,vz))
   case class Hail2D(p:Pos,v:Vel) :
-    def getNextHail : Option[Hail2D] = 
-      var px = p.x 
-      var py = p.y 
-      var vx = v.x 
-      var vy = v.y
-      if v.y == (lim * -1) then 
-        if v.x == (lim * -1) then 
-          if p.y == (lim * -1) then 
-            if p.x == (lim * -1) then 
-              return None
-            else
-              // println("getNextHail old (x-1) -> "+this)
-              px -= 1 
-              py = lim 
-              vx = lim
-              vy = lim
-          else 
-            // println("getNextHail old (y-1) -> "+this)
-            py -= 1 
-            vx = lim 
-            vy = lim 
-        else 
-          vx -= 1 
-          vy = lim 
-      else 
-        vy -= 1 
-      return Some(Hail2D(Pos(px,py),Vel(vx,vy)))
-
     def getMicroSeconds(p1:Pos) : Double = 
       return if (v.x == 0) then (p1.y - p.y) / v.y else (p1.x - p.x) / v.x
     def getCrossPos(newH : Hail2D) : Option[Pos] = 
@@ -78,51 +50,76 @@ class Day24() :
           return Some(resP)
         else 
           return None
+    
+    def deltaV(dvx:Long, dvy:Long): Hail2D = copy(v = Vel(v.x - dvx,v.y - dvy))
 
 
-  def getListCrossingHailInArea(listHail:List[Hail2D],areaMin:Long,areaMax:Long): Long = 
+  def getListCrossingHailInArea(listHail:List[Hail2D],areaMin:Long,areaMax:Long): List[(Hail2D,Hail2D,Pos)] = 
 
     @tailrec
-    def getListCrossingHailInArea(lh : List[Hail2D], lr : List[Pos]) : List[Pos] =
+    def getListCrossingHailInArea(lh : List[Hail2D], lr : List[(Hail2D,Hail2D,Pos)]) : List[(Hail2D,Hail2D,Pos)] =
       if lh.length <= 1 then
         return lr 
       else 
         val nh = lh.head 
-        val nlp = lh.tail.map(h => h.getCrossPos(nh)).filter(_.nonEmpty).map(h => h.get)
+        val nlp : List[(Hail2D,Hail2D,Pos)] = lh.tail.map(h => (h,h.getCrossPos(nh))).filter(_._2.nonEmpty).map(h => (nh,h._1,h._2.get))
         return getListCrossingHailInArea(lh.tail,nlp:::lr)
 
-    val res = getListCrossingHailInArea(listHail,List()).filter(p => p.isInArea(areaMin,areaMax))
-    return res.length
+    val res = getListCrossingHailInArea(listHail,List()).filter(p => p._3.isInArea(areaMin,areaMax))
+    return res
 
 
-  //NOT WORKING AT ALL ... PART2 NOT DONE YET
-  def tryHail(lh : List[Hail3D]) : Hail2D =
-    val startHailXY : Hail2D = Hail2D(Pos(lim,lim),Vel(lim,lim))
-    val listHailXY : List[Hail2D] = lh.take(3).map(_.getHailXY())
+  /**** Begin - Bloc fort Part 2 but don't works for Full data ... 
+   need to find another idea
+  ****/
+  def findRockOrigin( hails: List[Hail2D], vx:Long, vy:Long ) : Option[Pos] = 
+    val hs = hails.slice(0,3).map(_.deltaV(vx,vy))
+    val h0 = hs(0)
+    val h1 = hs(1)
+    val h2 = hs(2)
+    val p1 = h0.getCrossPos(h1)
+    val p2 = h0.getCrossPos(h2)
+    if p1.nonEmpty && p2.nonEmpty && (p1.get.x == p2.get.x && p1.get.y == p2.get.y) then 
+      val time = h0.getMicroSeconds(p1.get)
+      Some(Pos(h0.p.x + (h0.v.x * time),h0.p.y + (h0.v.y * time)))
+    else 
+      None
+  end findRockOrigin
 
-    @tailrec
-    def tryHailRec(start:Option[Hail2D],lh2d:List[Hail2D],res:Int) : Option[Hail2D] =
-      if start.isEmpty then 
-        return None
-      else if (lh2d.length == res) then 
-        return start
+
+  final case class Spiral(
+    x: Long, y:Long,
+    dx:Long, dy:Long,
+    count: Long, limit: Long) : 
+    def next : Spiral = 
+      if count > 0 then 
+        copy(x = x+dx, y= y+dy, count = count-1)
+      else if dy == 0 then
+        copy(x = x+dx, y = y+dy, dy = dx, dx = -dy, count = limit)
       else 
-        val st = start.get 
-        val nlres = lh2d.map(h => (h,st.getCrossPos(h))).filter(h => h._2.nonEmpty)
-                        .filter(h => st.getMicroSeconds(h._2.get) == h._1.getMicroSeconds(h._2.get)).length
-        // println("tryHailRec - Start : %s - nlres : %s".format(st,nlres))
-        return tryHailRec(st.getNextHail,lh2d,nlres)
-    
+        copy(x = x+dx, y = y+dy, dy = dx, dx = -dy, count = limit +1, limit = limit+1)
+    end next 
+  end Spiral
 
-    val res = tryHailRec(Some(startHailXY),listHailXY,0)
-    return res match
-      case Some(r) => return r
-      case _ => return startHailXY
-    
-
-      
+  object Spiral : 
+    final val Start = Spiral(0,0,1,0,0,0)
 
 
+  def SolvePart2(data : List[String]) : Long =
+    val listHail : List[Hail3D] = extractHail3DFromInput(data)
+    val listHailXY = listHail.map(h => h.getHailXY())
+    val listHailXZ = listHail.map(h => h.getHailXZ())
+
+    val Pos(x,y) : Pos = Iterator.iterate(Spiral.Start)(_.next)
+      .flatMap(s => findRockOrigin(listHailXY,s.x,s.y)).next()
+
+    val Pos(_,z) : Pos = Iterator.iterate(Spiral.Start)(_.next)
+      .flatMap(s => findRockOrigin(listHailXZ,s.x,s.y)).next()
+
+    return (x + y + z).toLong
+
+
+  /**** End - Bloc fort Part 2 ****/
 
 
   def extractHail3DFromInput(data:List[String]) : List[Hail3D] =
@@ -134,29 +131,25 @@ class Day24() :
   def runStep1(p: os.Path, f: String, debug:Boolean, minArea : Long, maxArea: Long) : Long =
     val data : geny.Generator[String] = os.read.lines.stream(p / f)
     val listHail : List[Hail2D] = extractHail3DFromInput(data.toList).map(h => h.getHailXY())
-    val res : Long = getListCrossingHailInArea(listHail,minArea,maxArea)
+    val res : List[(Hail2D,Hail2D,Pos)] = getListCrossingHailInArea(listHail,minArea,maxArea)
     if debug then 
       listHail.foreach(println)
-    return res
+    return res.length
 
   def runStep2(p: os.Path, f: String, debug:Boolean) : Long = 
     val data : geny.Generator[String] = os.read.lines.stream(p / f)
-    val listHail : List[Hail3D] = extractHail3DFromInput(data.toList)
-    val res = tryHail(listHail)
-    if debug then 
-      listHail.foreach(println)
-      println("Temp Res = "+res)
-    return 0
+    val res = SolvePart2(data.toList)
+    return res
 
 
 @main def runDay24() = 
   val day = Day24()
-  println("Step1 : Sample")
-  println(Utils.getTime(true,day.runStep1(Utils.dataSamplePath,day.dataFileS1,true,7,27)))
-  println("Step1 : Full")
-  println(Utils.getTime(true,day.runStep1(Utils.dataFullPath,day.dataFileFull,false,200000000000000L,400000000000000L)))
-  // println("Step2 : Sample")
-  // println(day.runStep2(Utils.dataSamplePath,day.dataFileS1,true))
+  // println("Step1 : Sample")
+  // println(Utils.getTime(true,day.runStep1(Utils.dataSamplePath,day.dataFileS1,true,7,27)))
+  // println("Step1 : Full")
+  // println(Utils.getTime(true,day.runStep1(Utils.dataFullPath,day.dataFileFull,false,200000000000000L,400000000000000L)))
+  println("Step2 : Sample")
+  println(Utils.getTime(true,day.runStep2(Utils.dataSamplePath,day.dataFileS1,true)))
   // println("Step2 : Full")
-  // println(day.runStep2(Utils.dataFullPath,day.dataFileFull,false))
+  // println(Utils.getTime(true,day.runStep2(Utils.dataFullPath,day.dataFileFull,false)))
   
